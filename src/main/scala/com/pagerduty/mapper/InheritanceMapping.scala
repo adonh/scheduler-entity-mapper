@@ -28,18 +28,18 @@ private[mapper] class InheritanceMapping(
    */
   protected val mappingByClassName: Map[String, (String, ClassMapping)] = {
     def classMapping(subclass: Class[_]): (String, ClassMapping) = {
-      val discriminatorAnnotation = subclass.getAnnotation(discriminatorAnnotationClass)
+      val discriminatorAnnotation = subclass.getAnnotation(DiscriminatorAnnotationClass)
       if (discriminatorAnnotation == null) {
         throw new EntityMapperException(s"Class ${subclass.getName} " +
           s"must have @Discriminator annotation, because it is a part of ${target.getName} " +
           "inheritance mapping.")
       }
       val discriminator = discriminatorAnnotation.value
-      val ttlOp = Option(target.getAnnotation(ttlAnnotationClass)).map(_.seconds)
+      val ttlOp = Option(target.getAnnotation(TtlAnnotationClass)).map(_.seconds)
       (discriminator, new ClassMapping(subclass, name, ttlOp, registeredSerializers, customMappers))
     }
 
-    target.getAnnotation(superclassAnnotationClass).subclasses.map { subclass =>
+    target.getAnnotation(SuperclassAnnotationClass).subclasses.map { subclass =>
       subclass.getName -> classMapping(subclass)
     }.toMap
   }
@@ -67,7 +67,7 @@ private[mapper] class InheritanceMapping(
   }
 
   protected val discriminatorMapping: FieldMapping = {
-    val discriminatorColumn = target.getAnnotation(superclassAnnotationClass).discriminatorColumn
+    val discriminatorColumn = target.getAnnotation(SuperclassAnnotationClass).discriminatorColumn
     val stringSerializer = registeredSerializers(classOf[String])
     new FieldMapping(stringSerializer, prefixed(discriminatorColumn))
   }

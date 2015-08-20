@@ -19,8 +19,8 @@ private[mapper] class ClassMapping(
   import ClassMapping.WrapperType
   import UntypedEntityMapping._
 
-  private def checkEntityAnnotation(): Unit = {
-    if (target.getAnnotation(entityAnnotationClass) == null) {
+  private def checkEntityAnnotation(target: Class[_]): Unit = {
+    if (target.getAnnotation(EntityAnnotationClass) == null) {
       val msg = name match {
         case Some(fieldName) =>
           s"Unable to resolve serializer for field '$fieldName'. " +
@@ -31,15 +31,15 @@ private[mapper] class ClassMapping(
       throw new EntityMapperException(msg)
     }
   }
-  private def checkNoArgConstructor(): Unit = {
+  private def checkNoArgConstructor(target: Class[_]): Unit = {
     val noArgsConstructor = target.getConstructors.find(_.getParameterTypes.size == 0)
     if (!noArgsConstructor.isDefined) {
       throw new EntityMapperException(
         s"Entity class ${target.getName} must provide a no-argument constructor.")
     }
   }
-  checkEntityAnnotation()
-  checkNoArgConstructor()
+  checkEntityAnnotation(target)
+  checkNoArgConstructor(target)
 
   protected def mappingForField(colName: String, field: Field): (Field, Mapping) = {
     def classFor(tpe: Type): Class[_] = tpe match {
@@ -55,7 +55,7 @@ private[mapper] class ClassMapping(
       }
     }
     def detectSerializer(unwrappedType: Class[_], filed: Field): Option[Any] = {
-      Option(field.getAnnotation(serializerAnnotationClass)) match {
+      Option(field.getAnnotation(SerializerAnnotationClass)) match {
         case Some(serializerAnnotation) =>
           Some(serializerAnnotation.value.newInstance)
         case None if registeredSerializers.contains(unwrappedType) =>
@@ -106,7 +106,7 @@ private[mapper] class ClassMapping(
 
   protected val fieldMapping: Seq[(Field, Mapping)] = {
     def colNameFor(field: Field): Option[String] = {
-      Option(field.getAnnotation(columnAnnotationClass)).map { columnAnnotation =>
+      Option(field.getAnnotation(ColumnAnnotationClass)).map { columnAnnotation =>
         if (columnAnnotation.name == null || columnAnnotation.name.trim().isEmpty) {
           throw new EntityMapperException(s"@Column annotation on field '${field.getName}' " +
             s"'in class ${target.getName} must have a non-empty name.")
@@ -135,7 +135,7 @@ private[mapper] class ClassMapping(
 
   protected def findIdField(fields: Seq[Field]): Option[Field] = {
     val ids = fields.filter { field =>
-      if (Option(field.getAnnotation(UntypedEntityMapping.idAnnotationClass)).isDefined) {
+      if (Option(field.getAnnotation(UntypedEntityMapping.IdAnnotationClass)).isDefined) {
         field.setAccessible(true)
         true
       }

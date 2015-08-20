@@ -4,14 +4,14 @@ import java.lang.annotation.Annotation
 import com.pagerduty.mapper.annotations.impl._
 
 private[mapper] object UntypedEntityMapping {
-  val entityAnnotationClass = classOf[EntityAnnotation]
-  val superclassAnnotationClass = classOf[SuperclassAnnotation]
-  val discriminatorAnnotationClass = classOf[DiscriminatorAnnotation]
-  val ttlAnnotationClass = classOf[TtlAnnotation]
+  val EntityAnnotationClass = classOf[EntityAnnotation]
+  val SuperclassAnnotationClass = classOf[SuperclassAnnotation]
+  val DiscriminatorAnnotationClass = classOf[DiscriminatorAnnotation]
+  val TtlAnnotationClass = classOf[TtlAnnotation]
 
-  val columnAnnotationClass = classOf[ColumnAnnotation]
-  val idAnnotationClass = classOf[IdAnnotation]
-  val serializerAnnotationClass = classOf[SerializerAnnotation]
+  val ColumnAnnotationClass = classOf[ColumnAnnotation]
+  val IdAnnotationClass = classOf[IdAnnotation]
+  val SerializerAnnotationClass = classOf[SerializerAnnotation]
 
   def apply(
       target: Class[_],
@@ -19,8 +19,8 @@ private[mapper] object UntypedEntityMapping {
       registeredSerializers: Map[Class[_], Any],
       customMappers: Map[Class[_ <: Annotation], Mapping => Mapping])
   : UntypedEntityMapping = {
-    val ttlOp = Option(target.getAnnotation(ttlAnnotationClass)).map(_.seconds)
-    if (target.getAnnotation(superclassAnnotationClass) != null) {
+    val ttlOp = Option(target.getAnnotation(TtlAnnotationClass)).map(_.seconds)
+    if (target.getAnnotation(SuperclassAnnotationClass) != null) {
       new InheritanceMapping(target, name, ttlOp, registeredSerializers, customMappers)
     }
     else {
