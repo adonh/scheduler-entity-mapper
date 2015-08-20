@@ -28,7 +28,15 @@ package test {
     def this() = this(null)
   }
 
-  @Entity @Ttl(seconds = 40) class EntityWithTtl()
+  @Entity class IdAnnotationEntityNoCol(@Id val id: String) {
+    def this() = this(null)
+  }
+
+  @Entity class NoIdAnnotationEntityNoCol()
+
+  @Entity @Ttl(seconds = 40) class EntityWithTtl(@Column(name = "field") val field: String) {
+    def this() = this(null)
+  }
 
   @Entity class InstantiationEntity(@Column(name = "field") val field: String) {
     var usedDefaultConstructor = false
@@ -88,6 +96,14 @@ class SimpleClassMappingSpec extends MappingSpec {
       "throw exception when column name is empty" in {
         intercept[EntityMapperException] {
           mappingFor(classOf[test.EmptyColName])
+        }
+      }
+      "throw exception when Entity without inheritance has no columns" in {
+        intercept[EntityMapperException] {
+          mappingFor(classOf[test.IdAnnotationEntityNoCol])
+        }
+        intercept[EntityMapperException] {
+          mappingFor(classOf[test.NoIdAnnotationEntityNoCol])
         }
       }
       "detect TTL settings" in {

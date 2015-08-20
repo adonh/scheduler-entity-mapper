@@ -123,6 +123,15 @@ private[mapper] class ClassMapping(
       mappingForField(colName, field)
     }
   }
+  private def checkEntityMappingNonEmpty(target: Class[_], fieldMapping: Seq[(Field, Mapping)])
+  : Unit = {
+    if (!InheritanceMapping.isPartOfInheritanceMapping(target) && fieldMapping.isEmpty) {
+      throw new EntityMapperException(
+        s"The class ${target.getName} must have at least one " +
+          "@Column annotated field, or it must belong to an inheritance mapping.")
+    }
+  }
+  checkEntityMappingNonEmpty(target, fieldMapping)
 
   val fieldNames: Set[String] = {
     fieldMapping.map { case (field, _) => field.getName }.toSet

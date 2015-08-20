@@ -1,7 +1,9 @@
 package com.pagerduty.mapper
 
+import com.pagerduty.mapper.UntypedEntityMapping._
 import java.lang.annotation.Annotation
 import java.util.logging.Logger
+import scala.annotation.tailrec
 
 
 /**
@@ -125,4 +127,10 @@ private[mapper] class InheritanceMapping(
 
 private[mapper] object InheritanceMapping {
   val log = Logger.getLogger(classOf[InheritanceMapping].getName)
+
+  @tailrec def isPartOfInheritanceMapping(target: Class[_]): Boolean = {
+    if (target.getAnnotation(SuperclassAnnotationClass) != null) true
+    else if (target.getSuperclass == null) false
+    else isPartOfInheritanceMapping(target.getSuperclass)
+  }
 }
