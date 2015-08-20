@@ -10,6 +10,7 @@ import java.lang.reflect.{Field, ParameterizedType, Type}
  */
 private[mapper] class ClassMapping(
     val target: Class[_],
+    val allowEmptyMapping: Boolean,
     val name: Option[String],
     val ttlSeconds: Option[Int],
     val registeredSerializers: Map[Class[_], Any],
@@ -125,7 +126,7 @@ private[mapper] class ClassMapping(
   }
   private def checkEntityMappingNonEmpty(target: Class[_], fieldMapping: Seq[(Field, Mapping)])
   : Unit = {
-    if (!InheritanceMapping.isPartOfInheritanceMapping(target) && fieldMapping.isEmpty) {
+    if (!allowEmptyMapping && fieldMapping.isEmpty) {
       throw new EntityMapperException(
         s"The class ${target.getName} must have at least one " +
           "@Column annotated field, or it must belong to an inheritance mapping.")

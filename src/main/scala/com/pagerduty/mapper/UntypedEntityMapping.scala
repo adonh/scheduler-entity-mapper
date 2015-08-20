@@ -24,7 +24,7 @@ private[mapper] object UntypedEntityMapping {
       new InheritanceMapping(target, name, ttlOp, registeredSerializers, customMappers)
     }
     else {
-      new ClassMapping(target, name, ttlOp, registeredSerializers, customMappers)
+      new ClassMapping(target, false, name, ttlOp, registeredSerializers, customMappers)
     }
   }
 }
