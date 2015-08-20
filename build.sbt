@@ -1,6 +1,6 @@
 organization := "com.pagerduty"
 
-name := "mapper"
+name := "entity-mapper"
 
 scalaVersion := "2.10.4"
 
