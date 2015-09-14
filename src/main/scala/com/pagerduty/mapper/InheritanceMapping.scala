@@ -1,7 +1,6 @@
 package com.pagerduty.mapper
 
 import java.lang.annotation.Annotation
-import java.util.logging.Logger
 
 
 /**
@@ -21,7 +20,6 @@ private[mapper] class InheritanceMapping(
   extends UntypedEntityMapping
 {
   import UntypedEntityMapping._
-  import InheritanceMapping.log
 
   /**
    * ClassMapping for each subclass.
@@ -122,9 +120,4 @@ private[mapper] class InheritanceMapping(
   }
 
   override def toString(): String = s"InheritanceMapping(${target.getName}, $name)"
-}
-
-
-private[mapper] object InheritanceMapping {
-  val log = Logger.getLogger(classOf[InheritanceMapping].getName)
 }
