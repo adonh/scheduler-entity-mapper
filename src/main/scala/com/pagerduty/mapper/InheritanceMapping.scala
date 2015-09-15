@@ -1,6 +1,7 @@
 package com.pagerduty.mapper
 
 import java.lang.annotation.Annotation
+import org.slf4j.LoggerFactory
 
 
 /**
@@ -20,6 +21,7 @@ private[mapper] class InheritanceMapping(
   extends UntypedEntityMapping
 {
   import UntypedEntityMapping._
+  import InheritanceMapping.log
 
   /**
    * ClassMapping for each subclass.
@@ -111,7 +113,7 @@ private[mapper] class InheritanceMapping(
   def read(targetId: Any, result: ResultAdapter): MappedResult = {
     discriminatorMapping.read(targetId, result).flatMap { case discriminator: String =>
       mappingByDiscriminator.get(discriminator).map(_.readDefined(targetId, result)).getOrElse {
-        log.severe(s"Not found mapping for discriminator '$discriminator' " +
+        log.error(s"Not found mapping for discriminator '$discriminator' " +
           s"for ${target.getName} inheritance mapping for entity " +
           s"'$targetId'.")
         Undefined
@@ -120,4 +122,9 @@ private[mapper] class InheritanceMapping(
   }
 
   override def toString(): String = s"InheritanceMapping(${target.getName}, $name)"
+}
+
+
+private[mapper] object InheritanceMapping {
+  val log = LoggerFactory.getLogger(classOf[InheritanceMapping])
 }
