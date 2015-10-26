@@ -6,7 +6,7 @@ This is an open source project!
 
 ## Description
 
-Entity mapper is a simple API for writing annotated classes into mutation batch, and converting query results back into class instances. Entity-mapper is database and driver agnostic.
+Entity-mapper is a simple API for writing annotated classes into mutation batch, and converting query results back into class instances. Entity-mapper API is database and driver agnostic.
 
 Key features:
  * Native handling of Scala Options
