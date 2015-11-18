@@ -1,4 +1,4 @@
-# mapper
+# entity-mapper
 
 This is an open source project!
 
