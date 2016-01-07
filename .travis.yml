@@ -4,8 +4,10 @@ branches:
 language: scala
 scala:
   - 2.10.4
+  - 2.11.7
 jdk:
-  - oraclejdk7
+  - openjdk7
+  - oraclejdk8
 cache:
   directories:
     - ~/.ivy2
