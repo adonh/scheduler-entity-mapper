@@ -1,15 +1,25 @@
 branches:
   only:
-    - master
+  - master
 language: scala
 scala:
-  - 2.10.4
-  - 2.11.7
+- 2.10.4
+- 2.11.7
 jdk:
-  - openjdk7
-  - oraclejdk8
+- openjdk7
+- oraclejdk8
 cache:
   directories:
-    - ~/.ivy2
+  - "~/.ivy2"
   apt: true
-sbt_args: -Dsbt.log.noformat=true -sbt-dir ~/.sbt
+sbt_args: "-Dsbt.log.noformat=true -sbt-dir ~/.sbt"
+env:
+  global:
+  - secure: p976RX9fjvVwu7ROo4NdXQIf331jFA2J6RtLX87nJ8uRkd3V2sdLmtwE6G0eNYJbpYatysVfw9nmD6ZRMC6TofL1GeX683ktNVlUTfDTUtwNUCfKMcLzGkTDRpQShZ6ICKwW2ReCERdjtO45VuT8aeQG8M5w//nBjLOu9MZicGXPGS/YKGrSIuXEcuP+QFUT3TU0o9G3NXdBckj1OaVc5UCrDr/CKMjVpNAXmZBBsoFMr2rLxb6NFKQiO1Sb8XYHcPS+8Asjbzb7Y5IAIp5py6tadNUXh5099t37H74TWrFulbVlgT/KUa1XGW05JaTH6TkEvRjzgIuTGp0tyG/r35lcU2sHvyHlEEQFckrPoQdQN5MXM5fNUH/iRybCXT6w1c0ItU3wWUDAa/EgHA+Q/4QFFA/l5TmkRVIy/l1e14RA743UXvyFdylo2sBEHYNtBN8SwscJs37BubqcdSQyaHpfyYnJxMgxgpyvO5gdcywsSCxGPsB2SItAHpGuSoJJqGY87+uhm652jTxBccj6uR4vl6+zSX3Z1IFREEgDY713Pq/BQpDKDkY88BtaT/w6sTH+8B+pLQSmJs5dTI9JwQslVpWvKkTEfMfiYBdmHVyWo+Oc6YnDk20ALhQ/36YITqCK94pfa51Ye165zOrz74EqjFMHL4a2vlNiMdqOOpc=
+  - secure: KjUJ+e9jidtENxH0mYTZGYucdJbOtcGtNtqezf1qhh4drmv2DUSP2KvMxxSLKKD/G0GNpOqDqAmuKmjIMnH4XW0nHrMopa0IwRGCkQdfSI9NROnFL6VZYkhaIRSJ03zfA7Twq320ukAZTCbCwmuHRddyGdG06s53//1rAlIfK1BufmbNGcH1D9qtqduLRpD01Zf4e+SpxQBEXQWU8LilvGyP6dPqiteEYci8xeO+blH9Z5Fz8353h9pi1DSZcKeGf8R4AepeGqOp2n1dkOWYcoDHymUKsjFLHcLZOgWKS9c9ier+EJ7z5itXj3ndN+n7WJKQCnbdPoGPJBvrk50vC0sy5lkli455onNfS7WLsMMPbEDoQBrcJIHeAp2bYrUBXHkWo8qXKji1zWSLiVY8B1vpe/5LXxppM5/+dkH9rdosJA27Xm/QLTm7ExpuMYfJ8VGu3+u3RyzPRJAxAgGHHEb5iuDh30ukSxpYWfWsFq3o0jXAWeIW+LAhQlNI0/jw/kU5Yhv4qJJiMvDbAQTciOaUMtq79bDzlt0hKCSUEGQQvAADbB1htNEMWYtqgNcpna2KsLeHN9OUZPDZKa+RihMmdri5TBN0CUrv5cA+OFTJ0Y4+OQoxWIO3vx22YIZ/oHs/V1cYulxJOHbMf5+VpwH8noGXpq0yPa2Ico5XzmY=
+after_success:
+  - >
+      test "${TRAVIS_PULL_REQUEST}" = 'false' &&
+      test "${TRAVIS_JDK_VERSION}" = 'openjdk7' &&
+      sh "$TRAVIS_BUILD_DIR/.travis.credentials.sh" &&
+      sbt ++${TRAVIS_SCALA_VERSION} publish
