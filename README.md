@@ -13,14 +13,14 @@ Key features:
 
 ## Installation
 
-This library is published to the Sonatype OSS Maven Repository:
+This library is published to PagerDuty Bintray OSS Maven repository:
 ```scala
-resolvers += Resolver.sonatypeRepo("public")
+resolvers += "bintray-pagerduty-oss-maven" at "https://dl.bintray.com/pagerduty/oss-maven"
 ```
 
 Adding the dependency to your SBT build file:
 ```scala
-libraryDependencies += "com.pagerduty" %% "entity-mapper" % "0.4.3"
+libraryDependencies += "com.pagerduty" %% "entity-mapper" % "0.5.0"
 ```
 
 ## Contact
