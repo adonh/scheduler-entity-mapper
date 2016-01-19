@@ -1,3 +1,8 @@
+0.6.0
+========
+
+  * Reworked Travis integration and added auto-tagging on release
+
 0.5.0
 ========
 
