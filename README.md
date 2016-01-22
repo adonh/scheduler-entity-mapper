@@ -1,4 +1,4 @@
-# entity-mapper [![Build Status](https://travis-ci.org/PagerDuty/entity-mapper.svg)](https://travis-ci.org/PagerDuty/entity-mapper)
+# entity-mapper [![Build Status](https://travis-ci.org/PagerDuty/entity-mapper.svg?branch=master)](https://travis-ci.org/PagerDuty/entity-mapper/builds)
 
 This is an open source project!
 
