@@ -27,7 +27,6 @@
 
 package com.pagerduty.mapper
 
-
 /**
  * Common interface that captures a mapping. Can be an entity mapping, field mapping,
  * option mapping, or a custom mapping.
@@ -47,8 +46,7 @@ trait Mapping {
    * @param mutation outgoing mutation
    * @param ttlSeconds mutation TTL argument applied to the values represented by this mapping
    */
-  def write(targetId: Any, value: Option[Any], mutation: MutationAdapter, ttlSeconds: Option[Int])
-  : Unit
+  def write(targetId: Any, value: Option[Any], mutation: MutationAdapter, ttlSeconds: Option[Int]): Unit
 
   /**
    * Reads a value from result.

@@ -32,12 +32,11 @@ package com.pagerduty.mapper
  */
 sealed abstract class MappedResult protected (
     /** Indicates if there was at least one column value for mapped columns. */
-    val hasColumns: Boolean)
-{
+    val hasColumns: Boolean
+) {
   def map(transform: Any => Any): MappedResult
   def flatMap(transform: Any => MappedResult): MappedResult
 }
-
 
 /**
  * Result that has a defined value. Sometimes we can get back a synthetic value, for example
@@ -45,8 +44,7 @@ sealed abstract class MappedResult protected (
  * properly set entities that have no footprint in the database.
  */
 case class MappedValue(override val hasColumns: Boolean, value: Any)
-  extends MappedResult(hasColumns)
-{
+    extends MappedResult(hasColumns) {
   require(value != null, "Mapped value must be defined.")
   def map(transform: Any => Any) = new MappedValue(hasColumns, transform(value))
   def flatMap(transform: Any => MappedResult) = transform(value) match {
@@ -54,7 +52,6 @@ case class MappedValue(override val hasColumns: Boolean, value: Any)
     case Undefined => Undefined
   }
 }
-
 
 /**
  * Result that has no value.

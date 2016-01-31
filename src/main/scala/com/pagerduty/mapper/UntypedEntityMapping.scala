@@ -41,21 +41,19 @@ private[mapper] object UntypedEntityMapping {
   val SerializerAnnotationClass = classOf[SerializerAnnotation]
 
   def apply(
-      target: Class[_],
-      name: Option[String],
-      registeredSerializers: Map[Class[_], Any],
-      customMappers: Map[Class[_ <: Annotation], Mapping => Mapping])
-  : UntypedEntityMapping = {
+    target: Class[_],
+    name: Option[String],
+    registeredSerializers: Map[Class[_], Any],
+    customMappers: Map[Class[_ <: Annotation], Mapping => Mapping]
+  ): UntypedEntityMapping = {
     val ttlOp = Option(target.getAnnotation(TtlAnnotationClass)).map(_.seconds)
     if (target.getAnnotation(SuperclassAnnotationClass) != null) {
       new InheritanceMapping(target, name, ttlOp, registeredSerializers, customMappers)
-    }
-    else {
+    } else {
       new ClassMapping(target, false, name, ttlOp, registeredSerializers, customMappers)
     }
   }
 }
-
 
 /**
  * Common interface that captures entity mapping.
@@ -95,7 +93,6 @@ private[mapper] trait UntypedEntityMapping extends Mapping {
    */
   def setId(entity: Any, id: Any): Unit
 
-
   protected def prefixed(fieldName: String): String = name match {
     case Some(prefix) => s"$prefix.$fieldName"
     case None => fieldName
@@ -105,10 +102,10 @@ private[mapper] trait UntypedEntityMapping extends Mapping {
    * Validates schema against conflicting entries with the same key, throwing an exception when
    * a conflict is found.
    */
-  protected def validateSchema(target: Class[_], serializersByColMapping: Set[(String, Any)])
-  : Unit = {
-    val serializerClassByColMapping = serializersByColMapping.map { case (name, ser) =>
-      name -> ser.getClass
+  protected def validateSchema(target: Class[_], serializersByColMapping: Set[(String, Any)]): Unit = {
+    val serializerClassByColMapping = serializersByColMapping.map {
+      case (name, ser) =>
+        name -> ser.getClass
     }
     val dups = serializerClassByColMapping
       .groupBy { case (colName, _) => colName }

@@ -27,7 +27,6 @@
 
 package com.pagerduty.mapper
 
-
 /**
  * ResultAdapter interface captures interaction required to read entity data.
  */

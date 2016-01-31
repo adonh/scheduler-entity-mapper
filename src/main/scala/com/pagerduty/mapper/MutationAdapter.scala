@@ -27,7 +27,6 @@
 
 package com.pagerduty.mapper
 
-
 /**
  * MutationAdapter interface captures interaction required to mutate entity data.
  */
@@ -42,8 +41,7 @@ trait MutationAdapter {
    * @param value column value
    * @param ttlSeconds optional TTL value in seconds
    */
-  def insert(targetId: Any, colName: String, serializer: Any, value: Any, ttlSeconds: Option[Int])
-  : Unit
+  def insert(targetId: Any, colName: String, serializer: Any, value: Any, ttlSeconds: Option[Int]): Unit
 
   /**
    * Inserts remove command into mutation batch.
