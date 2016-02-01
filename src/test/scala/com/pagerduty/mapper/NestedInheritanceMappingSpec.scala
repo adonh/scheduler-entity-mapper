@@ -29,12 +29,12 @@ package com.pagerduty.mapper
 
 import com.pagerduty.mapper.annotations._
 
-
 package test {
 
   @Entity
   class ParentOfNestedSuperclass(
-      @Column(name = "f0") val field: NestedSuperclass) {
+      @Column(name = "f0") val field: NestedSuperclass
+  ) {
     def this() = this(null)
   }
 
@@ -47,7 +47,6 @@ package test {
   @Entity @Discriminator("disc2")
   case class NestedSubclass2() extends NestedSuperclass
 }
-
 
 class NestedInheritanceMappingSpec extends MappingSpec {
   "Nested inheritance mapping should" - {
