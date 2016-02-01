@@ -28,22 +28,21 @@
 package com.pagerduty.mapper
 
 import java.lang.annotation.Annotation
-import java.lang.reflect.{Field, ParameterizedType, Type}
-
+import java.lang.reflect.{ Field, ParameterizedType, Type }
 
 /**
  * Manages a single class.
  * Allows to read objects from row results and write objects to mutation batch.
  */
 private[mapper] class ClassMapping(
-    val target: Class[_],
-    val allowEmptyMapping: Boolean,
-    val name: Option[String],
-    val ttlSeconds: Option[Int],
-    val registeredSerializers: Map[Class[_], Any],
-    val customMappers: Map[Class[_ <: Annotation], Mapping => Mapping])
-  extends UntypedEntityMapping
-{
+  val target: Class[_],
+  val allowEmptyMapping: Boolean,
+  val name: Option[String],
+  val ttlSeconds: Option[Int],
+  val registeredSerializers: Map[Class[_], Any],
+  val customMappers: Map[Class[_ <: Annotation], Mapping => Mapping]
+)
+    extends UntypedEntityMapping {
   import ClassMapping.WrapperType
   import UntypedEntityMapping._
 
@@ -63,7 +62,8 @@ private[mapper] class ClassMapping(
     val noArgsConstructor = target.getConstructors.find(_.getParameterTypes.size == 0)
     if (!noArgsConstructor.isDefined) {
       throw new EntityMapperException(
-        s"Entity class ${target.getName} must provide a no-argument constructor.")
+        s"Entity class ${target.getName} must provide a no-argument constructor."
+      )
     }
   }
   checkEntityAnnotation(target)
@@ -96,7 +96,8 @@ private[mapper] class ClassMapping(
       if (unwrappedType == classOf[Object] && !serializerOp.isDefined) {
         throw new EntityMapperException(
           s"Cannot infer serializer for ${target.getName}.${field.getName}, " +
-            "please provide explicit @Serializer annotation.")
+            "please provide explicit @Serializer annotation."
+        )
       }
     }
     def resolveUnwrappedMapping(unwrappedType: Class[_], serializerOp: Option[Any]) = {
@@ -105,11 +106,13 @@ private[mapper] class ClassMapping(
         case None =>
           try {
             UntypedEntityMapping(
-              unwrappedType, Some(prefixed(colName)), registeredSerializers, customMappers)
+              unwrappedType, Some(prefixed(colName)), registeredSerializers, customMappers
+            )
           } catch {
             case e: EntityMapperException =>
               throw new EntityMapperException(
-                s"Cannot create mapping for ${target.getName}: ${e.getMessage}", e)
+                s"Cannot create mapping for ${target.getName}: ${e.getMessage}", e
+              )
           }
       }
     }
@@ -151,12 +154,12 @@ private[mapper] class ClassMapping(
       mappingForField(colName, field)
     }
   }
-  private def checkEntityMappingNonEmpty(target: Class[_], fieldMapping: Seq[(Field, Mapping)])
-  : Unit = {
+  private def checkEntityMappingNonEmpty(target: Class[_], fieldMapping: Seq[(Field, Mapping)]): Unit = {
     if (!allowEmptyMapping && fieldMapping.isEmpty) {
       throw new EntityMapperException(
         s"The class ${target.getName} must have at least one " +
-          "@Column annotated field, or it must belong to an inheritance mapping.")
+          "@Column annotated field, or it must belong to an inheritance mapping."
+      )
     }
   }
   checkEntityMappingNonEmpty(target, fieldMapping)
@@ -175,12 +178,12 @@ private[mapper] class ClassMapping(
       if (Option(field.getAnnotation(UntypedEntityMapping.IdAnnotationClass)).isDefined) {
         field.setAccessible(true)
         true
-      }
-      else false
+      } else false
     }
     if (ids.size > 1) {
       throw new EntityMapperException(
-        s"Founds multiple @Id annotated fields in class ${target.getName}.")
+        s"Founds multiple @Id annotated fields in class ${target.getName}."
+      )
     }
     ids.headOption
   }
@@ -190,24 +193,25 @@ private[mapper] class ClassMapping(
   def getId(entity: Any) = idField.get.get(entity)
   def setId(entity: Any, id: Any) = idField.get.set(entity, id)
 
-  def serializersByColName = fieldMapping.flatMap { case (field, mapping) =>
-    mapping.serializersByColName
+  def serializersByColName = fieldMapping.flatMap {
+    case (field, mapping) =>
+      mapping.serializersByColName
   }
   validateSchema(target, serializersByColName.toSet)
 
   def write(
-      targetId: Any, entity: Option[Any], mutation: MutationAdapter, ttlSeconds: Option[Int])
-  : Unit = {
+    targetId: Any, entity: Option[Any], mutation: MutationAdapter, ttlSeconds: Option[Int]
+  ): Unit = {
     write(targetId, entity, mutation, Set.empty, ttlSeconds)
   }
 
   def write(
-      targetId: Any,
-      entity: Option[Any],
-      mutation: MutationAdapter,
-      exclusion: Set[String], // Required for NoneAsNoop to function correctly.
-      ttlSeconds: Option[Int])
-  : Unit = {
+    targetId: Any,
+    entity: Option[Any],
+    mutation: MutationAdapter,
+    exclusion: Set[String], // Required for NoneAsNoop to function correctly.
+    ttlSeconds: Option[Int]
+  ): Unit = {
     for ((field, mapping) <- fieldMapping if !exclusion.contains(field.getName)) {
       val value = if (entity.isDefined) Option(field.get(entity.get)) else None
       mapping.write(targetId, value, mutation, ttlSeconds)
@@ -226,8 +230,7 @@ private[mapper] class ClassMapping(
     new MappedValue(true, entity)
   }
 
-  protected def readInto(targetId: Any, entity: Any, result: ResultAdapter)
-  : Boolean = {
+  protected def readInto(targetId: Any, entity: Any, result: ResultAdapter): Boolean = {
     var defined = false
     for ((field, mapping) <- fieldMapping) {
       mapping.read(targetId, result) match {
@@ -235,7 +238,7 @@ private[mapper] class ClassMapping(
           field.set(entity, fieldValue)
           defined = defined | hasColumns
         case Undefined =>
-          // ignore
+        // ignore
       }
     }
     defined
@@ -243,7 +246,6 @@ private[mapper] class ClassMapping(
 
   override def toString(): String = s"ClassMapping(${target.getName}, $name)"
 }
-
 
 private[mapper] object ClassMapping {
   private object WrapperType extends Enumeration {

@@ -29,7 +29,6 @@ package com.pagerduty.mapper
 
 import java.lang.annotation.Annotation
 
-
 object EntityMapping {
 
   /**
@@ -43,14 +42,15 @@ object EntityMapping {
    * @return a new entity mapping
    */
   def apply[Id, Entity](
-      target: Class[Entity],
-      registeredSerializers: Map[Class[_], Any],
-      customMappers: Map[Class[_ <: Annotation], Mapping => Mapping])
-  : EntityMapping[Id, Entity] = {
+    target: Class[Entity],
+    registeredSerializers: Map[Class[_], Any],
+    customMappers: Map[Class[_ <: Annotation], Mapping => Mapping]
+  ): EntityMapping[Id, Entity] = {
     val constructorTarget = target
     new EntityMapping[Id, Entity] {
       val untypedMapping = UntypedEntityMapping(
-        constructorTarget, None, registeredSerializers, customMappers)
+        constructorTarget, None, registeredSerializers, customMappers
+      )
       def target = untypedMapping.target.asInstanceOf[Class[Entity]]
       def ttlSeconds = untypedMapping.ttlSeconds
       def isIdDefined = untypedMapping.isIdDefined
@@ -58,8 +58,8 @@ object EntityMapping {
       def setId(entity: Entity, id: Id) = untypedMapping.setId(entity, id)
       val serializersByColName = untypedMapping.serializersByColName.toMap
       def write(
-          targetId: Id, value: Option[Entity], mutation: MutationAdapter, ttlSeconds: Option[Int])
-      : Unit = {
+        targetId: Id, value: Option[Entity], mutation: MutationAdapter, ttlSeconds: Option[Int]
+      ): Unit = {
         untypedMapping.write(targetId, value, mutation, ttlSeconds)
       }
       def read(targetId: Id, result: ResultAdapter) = {
@@ -125,8 +125,7 @@ trait EntityMapping[Id, Entity] {
    * @param mutation outgoing mutation
    * @param ttlSeconds mutation TTL argument applied to the values represented by this mapping
    */
-  def write(targetId: Id, value: Option[Entity], mutation: MutationAdapter, ttlSeconds: Option[Int])
-  : Unit
+  def write(targetId: Id, value: Option[Entity], mutation: MutationAdapter, ttlSeconds: Option[Int]): Unit
 
   /**
    * Reads entity value from result.

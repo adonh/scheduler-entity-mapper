@@ -30,7 +30,6 @@ package com.pagerduty.mapper
 import java.lang.annotation.Annotation
 import org.slf4j.LoggerFactory
 
-
 /**
  * Maps single table inheritance (STI) using discriminator column.
  *
@@ -40,13 +39,13 @@ import org.slf4j.LoggerFactory
  * multiple inheritance mappings that service different inheritance subtrees.
  */
 private[mapper] class InheritanceMapping(
-    val target: Class[_],
-    val name: Option[String],
-    val ttlSeconds: Option[Int],
-    val registeredSerializers: Map[Class[_], Any],
-    val customMappers: Map[Class[_ <: Annotation], Mapping => Mapping])
-  extends UntypedEntityMapping
-{
+  val target: Class[_],
+  val name: Option[String],
+  val ttlSeconds: Option[Int],
+  val registeredSerializers: Map[Class[_], Any],
+  val customMappers: Map[Class[_ <: Annotation], Mapping => Mapping]
+)
+    extends UntypedEntityMapping {
   import UntypedEntityMapping._
   import InheritanceMapping.log
 
@@ -64,7 +63,8 @@ private[mapper] class InheritanceMapping(
       val discriminator = discriminatorAnnotation.value
       val ttlOp = Option(target.getAnnotation(TtlAnnotationClass)).map(_.seconds)
       val classMapping = new ClassMapping(
-        subclass, true, name, ttlOp, registeredSerializers, customMappers)
+        subclass, true, name, ttlOp, registeredSerializers, customMappers
+      )
       (discriminator, classMapping)
     }
 
@@ -82,7 +82,7 @@ private[mapper] class InheritanceMapping(
         throw new EntityMapperException(s"Classes ${classes.mkString(", ")} " +
           s"have the same @Discriminator value '$discriminator'.")
       case None =>
-        // ignore
+      // ignore
     }
 
     mappingByClassName.map { case (_, (disciminator, mapping)) => disciminator -> mapping }
@@ -92,7 +92,8 @@ private[mapper] class InheritanceMapping(
   protected def mappingFor(clazz: Class[_]): (String, ClassMapping) = {
     val className = if (clazz.getName.endsWith("$")) clazz.getSuperclass.getName else clazz.getName
     mappingByClassName.getOrElse(className, throw new EntityMapperException(
-      s"Class ${clazz.getName} is not part of the ${target.getName} inheritance mapping."))
+      s"Class ${clazz.getName} is not part of the ${target.getName} inheritance mapping."
+    ))
   }
 
   protected val discriminatorMapping: FieldMapping = {
@@ -100,7 +101,6 @@ private[mapper] class InheritanceMapping(
     val stringSerializer = registeredSerializers(classOf[String])
     new FieldMapping(stringSerializer, prefixed(discriminatorColumn))
   }
-
 
   val isIdDefined: Boolean = allMappings.forall(_.isIdDefined)
   def getId(entity: Any): Any = mappingFor(entity.getClass)._2.getId(entity)
@@ -118,8 +118,8 @@ private[mapper] class InheritanceMapping(
   }
 
   def write(
-      targetId: Any, entity: Option[Any], mutation: MutationAdapter, ttlSeconds: Option[Int])
-  : Unit = {
+    targetId: Any, entity: Option[Any], mutation: MutationAdapter, ttlSeconds: Option[Int]
+  ): Unit = {
     if (entity.isDefined) {
       val (discriminator, mapping) = mappingFor(entity.get.getClass)
       // Remove all the columns from other mappings.
@@ -130,27 +130,26 @@ private[mapper] class InheritanceMapping(
       discriminatorMapping.write(targetId, Some(discriminator), mutation, ttlSeconds)
       // Write mapping.
       mapping.write(targetId, entity, mutation, ttlSeconds)
-    }
-    else {
+    } else {
       discriminatorMapping.write(targetId, None, mutation, None)
       allMappings.foreach(_.write(targetId, None, mutation, None))
     }
   }
 
   def read(targetId: Any, result: ResultAdapter): MappedResult = {
-    discriminatorMapping.read(targetId, result).flatMap { case discriminator: String =>
-      mappingByDiscriminator.get(discriminator).map(_.readDefined(targetId, result)).getOrElse {
-        log.error(s"Not found mapping for discriminator '$discriminator' " +
-          s"for ${target.getName} inheritance mapping for entity " +
-          s"'$targetId'.")
-        Undefined
-      }
+    discriminatorMapping.read(targetId, result).flatMap {
+      case discriminator: String =>
+        mappingByDiscriminator.get(discriminator).map(_.readDefined(targetId, result)).getOrElse {
+          log.error(s"Not found mapping for discriminator '$discriminator' " +
+            s"for ${target.getName} inheritance mapping for entity " +
+            s"'$targetId'.")
+          Undefined
+        }
     }
   }
 
   override def toString(): String = s"InheritanceMapping(${target.getName}, $name)"
 }
-
 
 private[mapper] object InheritanceMapping {
   val log = LoggerFactory.getLogger(classOf[InheritanceMapping])

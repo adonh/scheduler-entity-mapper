@@ -30,7 +30,6 @@ package com.pagerduty.mapper
 import com.pagerduty.mapper.annotations.impl._
 import scala.annotation.meta.field
 
-
 package object annotations {
 
   /**
