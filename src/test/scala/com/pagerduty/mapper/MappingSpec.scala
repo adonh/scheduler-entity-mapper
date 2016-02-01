@@ -28,8 +28,7 @@
 package com.pagerduty.mapper
 
 import org.scalamock.scalatest.MockFactory
-import org.scalatest.{Matchers, FreeSpec}
-
+import org.scalatest.{ Matchers, FreeSpec }
 
 trait MappingSpec extends FreeSpec with Matchers with MockFactory {
   val targetId = "id0"
