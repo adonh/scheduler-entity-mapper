@@ -12,3 +12,5 @@ libraryDependencies ++= Seq(
   "org.scalatest" %% "scalatest" % "3.0.1" % Test,
   "org.scalamock" %% "scalamock-scalatest-support" % "3.5.0" % Test
 )
+
+enablePlugins(ScalafmtPlugin)

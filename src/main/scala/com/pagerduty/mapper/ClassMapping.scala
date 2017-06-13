@@ -28,20 +28,19 @@
 package com.pagerduty.mapper
 
 import java.lang.annotation.Annotation
-import java.lang.reflect.{ Field, ParameterizedType, Type }
+import java.lang.reflect.{Field, ParameterizedType, Type}
 
 /**
- * Manages a single class.
- * Allows to read objects from row results and write objects to mutation batch.
- */
+  * Manages a single class.
+  * Allows to read objects from row results and write objects to mutation batch.
+  */
 private[mapper] class ClassMapping(
-  val target: Class[_],
-  val allowEmptyMapping: Boolean,
-  val name: Option[String],
-  val ttlSeconds: Option[Int],
-  val registeredSerializers: Map[Class[_], Any],
-  val customMappers: Map[Class[_ <: Annotation], Mapping => Mapping]
-)
+    val target: Class[_],
+    val allowEmptyMapping: Boolean,
+    val name: Option[String],
+    val ttlSeconds: Option[Int],
+    val registeredSerializers: Map[Class[_], Any],
+    val customMappers: Map[Class[_ <: Annotation], Mapping => Mapping])
     extends UntypedEntityMapping {
   import ClassMapping.WrapperType
   import UntypedEntityMapping._
@@ -106,12 +105,16 @@ private[mapper] class ClassMapping(
         case None =>
           try {
             UntypedEntityMapping(
-              unwrappedType, Some(prefixed(colName)), registeredSerializers, customMappers
+              unwrappedType,
+              Some(prefixed(colName)),
+              registeredSerializers,
+              customMappers
             )
           } catch {
             case e: EntityMapperException =>
               throw new EntityMapperException(
-                s"Cannot create mapping for ${target.getName}: ${e.getMessage}", e
+                s"Cannot create mapping for ${target.getName}: ${e.getMessage}",
+                e
               )
           }
       }
@@ -139,8 +142,9 @@ private[mapper] class ClassMapping(
     def colNameFor(field: Field): Option[String] = {
       Option(field.getAnnotation(ColumnAnnotationClass)).map { columnAnnotation =>
         if (columnAnnotation.name == null || columnAnnotation.name.trim().isEmpty) {
-          throw new EntityMapperException(s"@Column annotation on field '${field.getName}' " +
-            s"'in class ${target.getName} must have a non-empty name.")
+          throw new EntityMapperException(
+            s"@Column annotation on field '${field.getName}' " +
+              s"'in class ${target.getName} must have a non-empty name.")
         }
         field.setAccessible(true)
         columnAnnotation.name
@@ -199,19 +203,17 @@ private[mapper] class ClassMapping(
   }
   validateSchema(target, serializersByColName.toSet)
 
-  def write(
-    targetId: Any, entity: Option[Any], mutation: MutationAdapter, ttlSeconds: Option[Int]
-  ): Unit = {
+  def write(targetId: Any, entity: Option[Any], mutation: MutationAdapter, ttlSeconds: Option[Int]): Unit = {
     write(targetId, entity, mutation, Set.empty, ttlSeconds)
   }
 
   def write(
-    targetId: Any,
-    entity: Option[Any],
-    mutation: MutationAdapter,
-    exclusion: Set[String], // Required for NoneAsNoop to function correctly.
-    ttlSeconds: Option[Int]
-  ): Unit = {
+      targetId: Any,
+      entity: Option[Any],
+      mutation: MutationAdapter,
+      exclusion: Set[String], // Required for NoneAsNoop to function correctly.
+      ttlSeconds: Option[Int]
+    ): Unit = {
     for ((field, mapping) <- fieldMapping if !exclusion.contains(field.getName)) {
       val value = if (entity.isDefined) Option(field.get(entity.get)) else None
       mapping.write(targetId, value, mutation, ttlSeconds)
