@@ -13,4 +13,4 @@ libraryDependencies ++= Seq(
   "org.scalamock" %% "scalamock-scalatest-support" % "3.5.0" % Test
 )
 
-enablePlugins(ScalafmtPlugin)
+scalafmtOnCompile in ThisBuild := true
