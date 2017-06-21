@@ -37,17 +37,14 @@ package test {
   @Entity class NoDefaultConstructor(@Column(name = "field") val field: String)
 
   class DeclaredSerializerNoConstructor(val param: String)
-  @Entity class DeclaredSerializerNoConstructorEntity(
-      @Serializer(classOf[DeclaredSerializerNoConstructor])@Column(name = "field") val field: Int
-  ) {
+  @Entity
+  class DeclaredSerializerNoConstructorEntity(
+      @Serializer(classOf[DeclaredSerializerNoConstructor]) @Column(name = "field") val field: Int) {
     def this() = this(100)
   }
 
-  @Entity class MultipleIdAnnotations(
-      @Id val id0: String,
-      @Id val id1: String,
-      @Column(name = "field") val field: String
-  ) {
+  @Entity
+  class MultipleIdAnnotations(@Id val id0: String, @Id val id1: String, @Column(name = "field") val field: String) {
     def this() = this(null, null, null)
   }
 
@@ -55,13 +52,15 @@ package test {
     def this() = this(null)
   }
 
-  @Entity class IdAnnotationEntityNoCol(@Id val id: String) {
+  @Entity
+  class IdAnnotationEntityNoCol(@Id val id: String) {
     def this() = this(null)
   }
 
   @Entity class NoIdAnnotationEntityNoCol()
 
-  @Entity @Ttl(seconds = 40) class EntityWithTtl(@Column(name = "field") val field: String) {
+  @Entity
+  @Ttl(seconds = 40) class EntityWithTtl(@Column(name = "field") val field: String) {
     def this() = this(null)
   }
 
@@ -84,16 +83,15 @@ package test {
   @Entity case class SimpleEntity( // Using case class for equals() implementation.
       @Column(name = "f0") val field0: String,
       @Column(name = "f1") val field1: String,
-      val transient: String
-  ) {
+      val transient: String) {
     def this() = this("default0", "default1", "defaultTransient")
   }
 
   case class DeclaredSerializer() // Using case class for equals() implementation.
-  @Entity class DeclaredSerializerEntiy(
+  @Entity
+  class DeclaredSerializerEntiy(
       @Column(name = "f0") val field0: Int,
-      @Serializer(classOf[DeclaredSerializer])@Column(name = "f1") val field1: Double
-  ) {
+      @Serializer(classOf[DeclaredSerializer]) @Column(name = "f1") val field1: Double) {
     def this() = this(100, 100.0)
   }
 }
@@ -256,7 +254,9 @@ class SimpleClassMappingSpec extends MappingSpec {
       val declaredSer = new test.DeclaredSerializer
       type Entity = test.DeclaredSerializerEntiy
       val mapping = EntityMapping[String, Entity](
-        classOf[Entity], Map(classOf[Int] -> IntSer), Map.empty
+        classOf[Entity],
+        Map(classOf[Int] -> IntSer),
+        Map.empty
       )
 
       "correctly pass serializers when reading entity" in {

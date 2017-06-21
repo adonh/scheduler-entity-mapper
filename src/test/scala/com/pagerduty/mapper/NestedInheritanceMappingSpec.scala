@@ -32,19 +32,20 @@ import com.pagerduty.mapper.annotations._
 package test {
 
   @Entity
-  class ParentOfNestedSuperclass(
-      @Column(name = "f0") val field: NestedSuperclass
-  ) {
+  class ParentOfNestedSuperclass(@Column(name = "f0") val field: NestedSuperclass) {
     def this() = this(null)
   }
 
-  @Entity @Superclass(subclasses = Array(classOf[NestedSubclass1], classOf[NestedSubclass2]))
+  @Entity
+  @Superclass(subclasses = Array(classOf[NestedSubclass1], classOf[NestedSubclass2]))
   class NestedSuperclass()
 
-  @Entity @Discriminator("disc1")
+  @Entity
+  @Discriminator("disc1")
   case class NestedSubclass1() extends NestedSuperclass
 
-  @Entity @Discriminator("disc2")
+  @Entity
+  @Discriminator("disc2")
   case class NestedSubclass2() extends NestedSuperclass
 }
 

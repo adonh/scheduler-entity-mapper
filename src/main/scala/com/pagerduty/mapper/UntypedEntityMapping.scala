@@ -115,7 +115,8 @@ private[mapper] trait UntypedEntityMapping extends Mapping {
     if (!dups.isEmpty) {
       throw new EntityMapperException(
         s"Conflicting column declarations for ${target.getName} " +
-          s"entity mapping for the following column names: ${dups.mkString(", ")}.")
+          s"entity mapping for the following column names: ${dups.mkString(", ")}."
+      )
     }
   }
 }

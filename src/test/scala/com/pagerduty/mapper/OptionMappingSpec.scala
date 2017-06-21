@@ -35,76 +35,79 @@ package testoption {
     def this() = this(null)
   }
 
-  @Entity class AutoDetectedAnyRefOption(
-      @Column(name = "field") val field: Option[String]
-  ) {
+  @Entity class AutoDetectedAnyRefOption(@Column(name = "field") val field: Option[String]) {
     def this() = this(null)
   }
 
   case class DeclaredSerializer() // Using case class for equals() implementation.
 
-  @Entity class DeclaredAnyRefOption(
-      @Column(name = "field")@Serializer(classOf[DeclaredSerializer]) val field: Option[String]
-  ) {
+  @Entity
+  class DeclaredAnyRefOption(
+      @Column(name = "field") @Serializer(classOf[DeclaredSerializer]) val field: Option[String]) {
     def this() = this(null)
   }
 
-  @Entity class DeclaredAnyValOption(
-      @Column(name = "field")@Serializer(classOf[DeclaredSerializer]) val field: Option[Int]
-  ) {
+  @Entity
+  class DeclaredAnyValOption(@Column(name = "field") @Serializer(classOf[DeclaredSerializer]) val field: Option[Int]) {
     def this() = this(null)
   }
 
-  @Entity class SimpleValueOption(
+  @Entity
+  class SimpleValueOption(
       // Extra field to keep entity defined when opField is None.
       @Column(name = "field") val field: String,
-      @Column(name = "opField") val opField: Option[String]
-  ) {
+      @Column(name = "opField") val opField: Option[String]) {
     def this() = this(null, Some("defaultOpFiled"))
   }
 
-  @Entity class NestedOpField(
+  @Entity
+  class NestedOpField(
       @Column(name = "nestedOp0") val nestedOp0: Option[String],
-      @Column(name = "nestedOp1") val nestedOp1: Option[String]
-  ) {
+      @Column(name = "nestedOp1") val nestedOp1: Option[String]) {
     def this() = this(Some("defaultNestedOp0"), Some("defaultNestedOp1"))
   }
 
-  @Entity class ParentOfNestedOp(
+  @Entity
+  class ParentOfNestedOp(
       @Column(name = "field") val field: String,
-      @Column(name = "opField") val opField: Option[NestedOpField]
-  ) {
+      @Column(name = "opField") val opField: Option[NestedOpField]) {
     def this() = this(
       "defaultField",
       Some(new NestedOpField(Some("defaultOp0"), Some("defaultOp1")))
     )
   }
 
-  @Entity @Superclass(subclasses = Array(
-    classOf[NestedInheritanceEntity1], classOf[NestedInheritanceEntity2]
-  ))
+  @Entity
+  @Superclass(
+    subclasses = Array(
+      classOf[NestedInheritanceEntity1],
+      classOf[NestedInheritanceEntity2]
+    )
+  )
   class SuperOfOpInheritance
 
-  @Entity @Discriminator("disc1") class NestedInheritanceEntity1(
-    @Column(name = "maybeOp0") val nestedOp0: String,
-    @Column(name = "maybeOp1") val nestedOp1: String
-  )
+  @Entity
+  @Discriminator("disc1")
+  class NestedInheritanceEntity1(
+      @Column(name = "maybeOp0") val nestedOp0: String,
+      @Column(name = "maybeOp1") val nestedOp1: String)
       extends SuperOfOpInheritance {
     def this() = this("defaultNestedOp0", "defaultNestedOp1")
   }
 
-  @Entity @Discriminator("disc2") class NestedInheritanceEntity2(
-    @Column(name = "maybeOp0") val nestedOp0: Option[String],
-    @Column(name = "maybeOp1") val nestedOp1: Option[String]
-  )
+  @Entity
+  @Discriminator("disc2")
+  class NestedInheritanceEntity2(
+      @Column(name = "maybeOp0") val nestedOp0: Option[String],
+      @Column(name = "maybeOp1") val nestedOp1: Option[String])
       extends SuperOfOpInheritance {
     def this() = this(Some("defaultNestedOp0"), Some("defaultNestedOp1"))
   }
 
-  @Entity class ParentOfInheritanceOp(
+  @Entity
+  class ParentOfInheritanceOp(
       @Column(name = "field") val field: String,
-      @Column(name = "opField") val opField: Option[SuperOfOpInheritance]
-  ) {
+      @Column(name = "opField") val opField: Option[SuperOfOpInheritance]) {
     def this() = this(
       "defaultField",
       Some(new NestedInheritanceEntity2(Some("defaultOp0"), Some("defaultOp1")))
@@ -196,7 +199,8 @@ class OptionMappingSpec extends MappingSpec {
       }
       "correctly write wrapped value" in {
         val entity = new testoption.ParentOfNestedOp(
-          "*", Some(new testoption.NestedOpField(Some("value"), Some("*")))
+          "*",
+          Some(new testoption.NestedOpField(Some("value"), Some("*")))
         )
         (mutAdapter.insert _).expects(targetId, "opField.nestedOp0", StringSer, "value", None)
         (mutAdapter.insert _).stubs(targetId, *, *, *, None)
@@ -210,7 +214,8 @@ class OptionMappingSpec extends MappingSpec {
       }
       "correctly write None value" in {
         val entity = new testoption.ParentOfNestedOp(
-          "*", Some(new testoption.NestedOpField(None, Some("*")))
+          "*",
+          Some(new testoption.NestedOpField(None, Some("*")))
         )
         (mutAdapter.remove _).expects(targetId, "opField.nestedOp0")
         (mutAdapter.insert _).stubs(targetId, *, *, *, None)
@@ -232,7 +237,8 @@ class OptionMappingSpec extends MappingSpec {
       }
       "correctly write entity value with Nones" in {
         val entity = new testoption.ParentOfNestedOp(
-          "*", Some(new testoption.NestedOpField(None, None))
+          "*",
+          Some(new testoption.NestedOpField(None, None))
         )
         (mutAdapter.remove _).expects(targetId, "opField.nestedOp0")
         (mutAdapter.remove _).expects(targetId, "opField.nestedOp1")
@@ -258,7 +264,8 @@ class OptionMappingSpec extends MappingSpec {
       }
       "correctly write wrapped value" in {
         val entity = new testoption.ParentOfInheritanceOp(
-          "*", Some(new testoption.NestedInheritanceEntity2(Some("value"), Some("*")))
+          "*",
+          Some(new testoption.NestedInheritanceEntity2(Some("value"), Some("*")))
         )
         (mutAdapter.insert _).expects(targetId, "opField.discriminator", StringSer, "disc2", None)
         (mutAdapter.insert _).expects(targetId, "opField.maybeOp0", StringSer, "value", None)
@@ -275,7 +282,8 @@ class OptionMappingSpec extends MappingSpec {
       }
       "correctly write None value" in {
         val entity = new testoption.ParentOfInheritanceOp(
-          "*", Some(new testoption.NestedInheritanceEntity2(None, Some("value")))
+          "*",
+          Some(new testoption.NestedInheritanceEntity2(None, Some("value")))
         )
         (mutAdapter.remove _).expects(targetId, "opField.maybeOp0")
         (mutAdapter.insert _).stubs(targetId, *, *, *, None)
@@ -293,7 +301,8 @@ class OptionMappingSpec extends MappingSpec {
       }
       "correctly write entity value with Nones" in {
         val entity = new testoption.ParentOfInheritanceOp(
-          "*", Some(new testoption.NestedInheritanceEntity2(None, None))
+          "*",
+          Some(new testoption.NestedInheritanceEntity2(None, None))
         )
         (mutAdapter.insert _).expects(targetId, "opField.discriminator", StringSer, "disc2", None)
         (mutAdapter.remove _).expects(targetId, "opField.maybeOp0")

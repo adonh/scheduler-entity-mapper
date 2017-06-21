@@ -58,7 +58,8 @@ private[mapper] class InheritanceMapping(
         throw new EntityMapperException(
           s"Class ${subclass.getName} " +
             s"must have @Discriminator annotation, because it is a part of ${target.getName} " +
-            "inheritance mapping.")
+            "inheritance mapping."
+        )
       }
       val discriminator = discriminatorAnnotation.value
       val ttlOp = Option(target.getAnnotation(TtlAnnotationClass)).map(_.seconds)
@@ -90,7 +91,8 @@ private[mapper] class InheritanceMapping(
       case Some((discriminator, classes)) =>
         throw new EntityMapperException(
           s"Classes ${classes.mkString(", ")} " +
-            s"have the same @Discriminator value '$discriminator'.")
+            s"have the same @Discriminator value '$discriminator'."
+        )
       case None =>
       // ignore
     }
@@ -101,10 +103,12 @@ private[mapper] class InheritanceMapping(
 
   protected def mappingFor(clazz: Class[_]): (String, ClassMapping) = {
     val className = if (clazz.getName.endsWith("$")) clazz.getSuperclass.getName else clazz.getName
-    mappingByClassName.getOrElse(className,
-                                 throw new EntityMapperException(
-                                   s"Class ${clazz.getName} is not part of the ${target.getName} inheritance mapping."
-                                 ))
+    mappingByClassName.getOrElse(
+      className,
+      throw new EntityMapperException(
+        s"Class ${clazz.getName} is not part of the ${target.getName} inheritance mapping."
+      )
+    )
   }
 
   protected val discriminatorMapping: FieldMapping = {
@@ -123,7 +127,8 @@ private[mapper] class InheritanceMapping(
     if (reserved.isDefined) {
       throw new EntityMapperException(
         s"Column name '${reserved.get._1}' " +
-          s"is reserved as discriminator column name in ${target.getName} inheritance mapping.")
+          s"is reserved as discriminator column name in ${target.getName} inheritance mapping."
+      )
     }
     validateSchema(target, schema)
     schema.toSeq ++ discriminatorMapping.serializersByColName
@@ -153,7 +158,8 @@ private[mapper] class InheritanceMapping(
           log.error(
             s"Not found mapping for discriminator '$discriminator' " +
               s"for ${target.getName} inheritance mapping for entity " +
-              s"'$targetId'.")
+              s"'$targetId'."
+          )
           Undefined
         }
     }

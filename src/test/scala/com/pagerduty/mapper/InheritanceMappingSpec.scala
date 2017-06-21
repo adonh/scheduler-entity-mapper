@@ -30,41 +30,40 @@ package com.pagerduty.mapper
 import com.pagerduty.mapper.annotations._
 
 package testsuper {
-  @Entity @Superclass(subclasses = Array(classOf[NoAnnotationEntity]))
+  @Entity
+  @Superclass(subclasses = Array(classOf[NoAnnotationEntity]))
   class SuperOfNoAnnotationEntity()
 
-  @Discriminator("disc") class NoAnnotationEntity(
-    @Column(name = "field") val field: String
-  )
-      extends SuperOfNoAnnotationEntity {
+  @Discriminator("disc")
+  class NoAnnotationEntity(@Column(name = "field") val field: String) extends SuperOfNoAnnotationEntity {
     def this() = this(null)
   }
 
-  @Entity @Superclass(subclasses = Array(classOf[NoDefaultConstructor]))
+  @Entity
+  @Superclass(subclasses = Array(classOf[NoDefaultConstructor]))
   class SuperOfNoDefaultConstructorEntity()
 
-  @Entity @Discriminator("disc") class NoDefaultConstructor(
-    @Column(name = "field") val field: String
-  )
-      extends SuperOfNoDefaultConstructorEntity
+  @Entity
+  @Discriminator("disc")
+  class NoDefaultConstructor(@Column(name = "field") val field: String) extends SuperOfNoDefaultConstructorEntity
 
-  @Entity @Superclass(subclasses = Array(classOf[DeclaredSerializerNoConstructorEntity]))
+  @Entity
+  @Superclass(subclasses = Array(classOf[DeclaredSerializerNoConstructorEntity]))
   class SuperOfDeclaredSerializerNoConstructorEntity()
 
   class DeclaredSerializerNoConstructor(val param: String)
-  @Entity @Discriminator("disc") class DeclaredSerializerNoConstructorEntity(
-      @Serializer(classOf[DeclaredSerializerNoConstructor])@Column(name = "field") val field: Int
-  ) {
+  @Entity
+  @Discriminator("disc")
+  class DeclaredSerializerNoConstructorEntity(
+      @Serializer(classOf[DeclaredSerializerNoConstructor]) @Column(name = "field") val field: Int) {
     def this() = this(100)
   }
 
-  @Entity @Superclass(subclasses = Array(classOf[NoDiscriminatorEntity]))
+  @Entity
+  @Superclass(subclasses = Array(classOf[NoDiscriminatorEntity]))
   class SuperOfNoDiscriminatorEntity()
 
-  @Entity class NoDiscriminatorEntity(
-    @Column(name = "field") val field: String
-  )
-      extends SuperOfNoDiscriminatorEntity {
+  @Entity class NoDiscriminatorEntity(@Column(name = "field") val field: String) extends SuperOfNoDiscriminatorEntity {
     def this() = this(null)
   }
 
@@ -75,79 +74,90 @@ package testsuper {
   @Entity
   class SuperOfColNameCollision()
 
-  @Entity @Discriminator("disc") class ColNameCollision(
-    @Column(name = "collision") val field: String
-  )
-      extends SuperOfColNameCollision {
+  @Entity
+  @Discriminator("disc")
+  class ColNameCollision(@Column(name = "collision") val field: String) extends SuperOfColNameCollision {
     def this() = this(null)
   }
 
-  @Entity @Superclass(subclasses = Array(classOf[EntityWithTtl1])) @Ttl(seconds = 202)
+  @Entity
+  @Superclass(subclasses = Array(classOf[EntityWithTtl1]))
+  @Ttl(seconds = 202)
   class SuperWithTtl
 
-  @Entity @Discriminator("disc") @Ttl(seconds = 50) class EntityWithTtl1() extends SuperWithTtl
+  @Entity
+  @Discriminator("disc")
+  @Ttl(seconds = 50) class EntityWithTtl1() extends SuperWithTtl
 
-  @Entity @Superclass(subclasses = Array(classOf[EntityWithTtl2]))
+  @Entity
+  @Superclass(subclasses = Array(classOf[EntityWithTtl2]))
   class SuperWithoutTtl
 
-  @Entity @Discriminator("disc") @Ttl(seconds = 60) class EntityWithTtl2() extends SuperWithoutTtl
+  @Entity
+  @Discriminator("disc")
+  @Ttl(seconds = 60) class EntityWithTtl2() extends SuperWithoutTtl
 
   @Superclass(subclasses = Array(classOf[DiscCollisionEntity1], classOf[DiscCollisionEntity2]))
   @Entity class SuperOfDiscCollisionEntities
 
-  @Entity @Discriminator("disc0") class DiscCollisionEntity1() extends SuperOfDiscCollisionEntities
-  @Entity @Discriminator("disc0") class DiscCollisionEntity2() extends SuperOfDiscCollisionEntities
+  @Entity
+  @Discriminator("disc0") class DiscCollisionEntity1() extends SuperOfDiscCollisionEntities
+  @Entity
+  @Discriminator("disc0") class DiscCollisionEntity2() extends SuperOfDiscCollisionEntities
 
   @Entity
-  @Superclass(subclasses = Array(
-    classOf[DistinctSerializerEntity1], classOf[DistinctSerializerEntity2]
-  ))
+  @Superclass(
+    subclasses = Array(
+      classOf[DistinctSerializerEntity1],
+      classOf[DistinctSerializerEntity2]
+    )
+  )
   class DistinctSerializerInheritance
 
   case class DistinctSerializer1() // Using case class for equals() implementation.
   case class DistinctSerializer2() // Using case class for equals() implementation.
 
-  @Entity @Discriminator("disc1")
-  class DistinctSerializerEntity1(
-    @Serializer(classOf[DistinctSerializer1])@Column(name = "field") val filed: Int
-  )
-      extends DistinctSerializerInheritance {
-    def this() = this(100)
-  }
-
-  @Entity @Discriminator("disc2")
-  class DistinctSerializerEntity2(
-    @Serializer(classOf[DistinctSerializer2])@Column(name = "field") val filed: Int
-  )
+  @Entity
+  @Discriminator("disc1")
+  class DistinctSerializerEntity1(@Serializer(classOf[DistinctSerializer1]) @Column(name = "field") val filed: Int)
       extends DistinctSerializerInheritance {
     def this() = this(100)
   }
 
   @Entity
-  @Superclass(subclasses = Array(
-    classOf[SameSerializerEntity1], classOf[SameSerializerEntity2]
-  ))
+  @Discriminator("disc2")
+  class DistinctSerializerEntity2(@Serializer(classOf[DistinctSerializer2]) @Column(name = "field") val filed: Int)
+      extends DistinctSerializerInheritance {
+    def this() = this(100)
+  }
+
+  @Entity
+  @Superclass(
+    subclasses = Array(
+      classOf[SameSerializerEntity1],
+      classOf[SameSerializerEntity2]
+    )
+  )
   class SameSerializerInheritance
 
   class SameSerializer() // equals() must not be implemented.
 
-  @Entity @Discriminator("disc1")
-  class SameSerializerEntity1(
-    @Serializer(classOf[SameSerializer])@Column(name = "field") val filed: Int
-  )
+  @Entity
+  @Discriminator("disc1")
+  class SameSerializerEntity1(@Serializer(classOf[SameSerializer]) @Column(name = "field") val filed: Int)
       extends SameSerializerInheritance {
     def this() = this(100)
   }
 
-  @Entity @Discriminator("disc2")
-  class SameSerializerEntity2(
-    @Serializer(classOf[SameSerializer])@Column(name = "field") val filed: Int
-  )
+  @Entity
+  @Discriminator("disc2")
+  class SameSerializerEntity2(@Serializer(classOf[SameSerializer]) @Column(name = "field") val filed: Int)
       extends SameSerializerInheritance {
     def this() = this(100)
   }
 
-  @Entity @Superclass(subclasses = Array(classOf[InstantiationEntity]))
+  @Entity
+  @Superclass(subclasses = Array(classOf[InstantiationEntity]))
   class SuperOfInstantiationEntity(@Column(name = "superField") val superField: String) {
     var superUsedDefaultConstructor = false
     def this() = {
@@ -156,10 +166,9 @@ package testsuper {
     }
   }
 
-  @Entity @Discriminator("disc") class InstantiationEntity(
-    @Column(name = "field") val field: String
-  )
-      extends SuperOfInstantiationEntity {
+  @Entity
+  @Discriminator("disc")
+  class InstantiationEntity(@Column(name = "field") val field: String) extends SuperOfInstantiationEntity {
     var usedDefaultConstructor = false
     def this() = {
       this(null)
@@ -167,21 +176,23 @@ package testsuper {
     }
   }
 
-  @Entity @Superclass(subclasses = Array(classOf[IdAnnotationEntity]))
+  @Entity
+  @Superclass(subclasses = Array(classOf[IdAnnotationEntity]))
   class SuperWithId(@Id val id: String)
 
-  @Entity @Discriminator("disc")
-  class IdAnnotationEntity(id: String, @Id @Column(name = "field") val field: String)
-      extends SuperWithId(id) {
+  @Entity
+  @Discriminator("disc")
+  class IdAnnotationEntity(id: String, @Id @Column(name = "field") val field: String) extends SuperWithId(id) {
     def this() = this(null, null)
   }
 
-  @Entity @Superclass(subclasses = Array(classOf[InheritanceWithId1]))
+  @Entity
+  @Superclass(subclasses = Array(classOf[InheritanceWithId1]))
   class InheritanceWithId
 
-  @Entity @Discriminator("disc")
-  class InheritanceWithId1(@Id val id: String, @Column(name = "field") val field: String)
-      extends InheritanceWithId {
+  @Entity
+  @Discriminator("disc")
+  class InheritanceWithId1(@Id val id: String, @Column(name = "field") val field: String) extends InheritanceWithId {
     def this() = this(null, null)
   }
 
@@ -189,53 +200,49 @@ package testsuper {
   @Superclass(subclasses = Array(classOf[InheritanceWithoutId1], classOf[InheritanceWithoutId2]))
   class InheritanceWithoutId
 
-  @Entity @Discriminator("disc1")
+  @Entity
+  @Discriminator("disc1")
   class InheritanceWithoutId1(@Id val id: String, @Column(name = "field") val field: String)
       extends InheritanceWithoutId {
     def this() = this(null, null)
   }
 
-  @Entity @Discriminator("disc2")
-  class InheritanceWithoutId2(@Column(name = "field") val field: String)
-      extends InheritanceWithoutId {
+  @Entity
+  @Discriminator("disc2")
+  class InheritanceWithoutId2(@Column(name = "field") val field: String) extends InheritanceWithoutId {
     def this() = this(null)
   }
 
   @Entity
   @Superclass(subclasses = Array(classOf[SimpleEntity1], classOf[SimpleEntity2]))
-  class SimpleInheritance(
-      @Column(name = "commonField") val commonField: String,
-      val commonTransient: String
-  ) {
+  class SimpleInheritance(@Column(name = "commonField") val commonField: String, val commonTransient: String) {
     def this() = this("defaultCommonField", "defaultCommonTransient")
   }
 
-  @Entity @Discriminator("disc1")
+  @Entity
+  @Discriminator("disc1")
   class SimpleEntity1(
-    commonField: String,
-    commonTransient: String,
-    @Column(name = "field") val field: String,
-    val transient: String
-  )
+      commonField: String,
+      commonTransient: String,
+      @Column(name = "field") val field: String,
+      val transient: String)
       extends SimpleInheritance(commonField, commonTransient) {
     def this() = {
       this("defaultCommonField", "defaultCommonTransient", "defaultField", "defaultTransient")
     }
   }
-  @Entity @Discriminator("disc2")
+  @Entity
+  @Discriminator("disc2")
   class SimpleEntity2( // Using case class for equals() implementation.
-    @Column(name = "anotherField") val anotherField: String
-  )
+      @Column(name = "anotherField") val anotherField: String)
       extends SimpleInheritance {
     def this() = this("defaultAnotherField")
   }
 
   // Note: this class is not part of SimpleInheritance mapping declaration.
-  @Entity @Discriminator("disc3")
-  class SimpleEntity3(
-    @Column(name = "anotherField") val anotherField: String
-  )
-      extends SimpleInheritance {
+  @Entity
+  @Discriminator("disc3")
+  class SimpleEntity3(@Column(name = "anotherField") val anotherField: String) extends SimpleInheritance {
     def this() = this("defaultAnotherField")
   }
 }
@@ -413,7 +420,10 @@ class InheritanceMappingSpec extends MappingSpec {
       val mapping = mappingFor(classOf[Entity])
       val mutAdapter = mock[MutationAdapter]
       val entity = new testsuper.SimpleEntity1(
-        "commonValue", "commonTransientValue", "value", "transientValue"
+        "commonValue",
+        "commonTransientValue",
+        "value",
+        "transientValue"
       )
 
       "throw exception when writing class which is not part of InheritanceMapping" in {
@@ -435,7 +445,10 @@ class InheritanceMappingSpec extends MappingSpec {
       }
       "delete @Column fields with null values" in {
         val entity = new testsuper.SimpleEntity1(
-          null, "commonTransientValue", null, "transientValue"
+          null,
+          "commonTransientValue",
+          null,
+          "transientValue"
         )
         (mutAdapter.insert _).expects(targetId, "discriminator", StringSer, "disc1", None)
         (mutAdapter.remove _).expects(targetId, "commonField")

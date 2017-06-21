@@ -144,7 +144,8 @@ private[mapper] class ClassMapping(
         if (columnAnnotation.name == null || columnAnnotation.name.trim().isEmpty) {
           throw new EntityMapperException(
             s"@Column annotation on field '${field.getName}' " +
-              s"'in class ${target.getName} must have a non-empty name.")
+              s"'in class ${target.getName} must have a non-empty name."
+          )
         }
         field.setAccessible(true)
         columnAnnotation.name

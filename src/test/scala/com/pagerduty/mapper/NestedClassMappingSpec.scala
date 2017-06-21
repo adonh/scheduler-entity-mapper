@@ -30,46 +30,35 @@ package com.pagerduty.mapper
 import com.pagerduty.mapper.annotations._
 
 package test {
-  @Entity class ParentOfNoAnnotationNestedField(
-      @Column(name = "nested") val nested: NoAnnotationEntity
-  ) {
+  @Entity class ParentOfNoAnnotationNestedField(@Column(name = "nested") val nested: NoAnnotationEntity) {
     def this() = this(null)
   }
 
-  @Entity class ParentOfNoDefaultConstructorNestedField(
-      @Column(name = "nested") val nested: NoDefaultConstructor
-  ) {
+  @Entity class ParentOfNoDefaultConstructorNestedField(@Column(name = "nested") val nested: NoDefaultConstructor) {
     def this() = this(null)
   }
 
-  @Entity class ParentWithNoTtl(
-      @Column(name = "nested") val nested: EntityWithTtl
-  ) {
+  @Entity class ParentWithNoTtl(@Column(name = "nested") val nested: EntityWithTtl) {
     def this() = this(null)
   }
 
-  @Entity @Ttl(seconds = 101) class ParentWithTtl(
-      @Column(name = "nested") val nested: EntityWithTtl
-  ) {
+  @Entity
+  @Ttl(seconds = 101) class ParentWithTtl(@Column(name = "nested") val nested: EntityWithTtl) {
     def this() = this(null)
   }
 
-  @Entity class ParentOfInstantiationNestedField(
-      @Column(name = "nested") val nested: InstantiationEntity
-  ) {
+  @Entity class ParentOfInstantiationNestedField(@Column(name = "nested") val nested: InstantiationEntity) {
     def this() = this(null)
   }
 
-  @Entity class ParentOfNestedField(
+  @Entity
+  class ParentOfNestedField(
       @Column(name = "field") val field: String,
-      @Column(name = "nested") val nested: SimpleEntity
-  ) {
+      @Column(name = "nested") val nested: SimpleEntity) {
     def this() = this("default", new SimpleEntity)
   }
 
-  @Entity class ParentOfDeclaredSerializerField(
-      @Column(name = "nested") val nested: DeclaredSerializerEntiy
-  ) {
+  @Entity class ParentOfDeclaredSerializerField(@Column(name = "nested") val nested: DeclaredSerializerEntiy) {
     def this() = this(new DeclaredSerializerEntiy)
   }
 }
@@ -202,7 +191,9 @@ class NestedClassMappingSpec extends MappingSpec {
       val declaredSer = new test.DeclaredSerializer
       type Entity = test.ParentOfDeclaredSerializerField
       val mapping = EntityMapping[String, Entity](
-        classOf[Entity], Map(classOf[Int] -> IntSer), Map.empty
+        classOf[Entity],
+        Map(classOf[Int] -> IntSer),
+        Map.empty
       )
 
       "correctly pass serializers when reading entity" in {
